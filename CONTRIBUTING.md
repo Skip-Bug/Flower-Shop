@@ -31,7 +31,10 @@ chore: bump ruff to 0.17.3
 ```
 
 ## Установка
-
+Для работы установите пакет зависимостей для разработчиков
+```bash
+pip install -r requirements-dev.txt
+```
 Установите pre-commit хуки:
 
 ```bash
