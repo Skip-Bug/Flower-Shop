@@ -16,4 +16,4 @@ class BouquetAdmin(admin.ModelAdmin):
     list_filter = ("events", "is_active")
     prepopulated_fields = {"slug": ("title",)}
     filter_horizontal = ("events",)
-    search_fielsds = "title"
+    search_fields = ("title",)
