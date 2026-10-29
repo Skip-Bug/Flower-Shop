@@ -19,4 +19,3 @@ def order(request):
 
 def order_step(request):
     return render(request, "order-step.html")
-

@@ -15,4 +15,3 @@ def card(request):
 
 def consultation(request):
     return render(request, "consultation.html")
-
