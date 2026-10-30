@@ -29,49 +29,20 @@
 			<div class="catalog">
 				<div class="title">Все букеты</div>
 				<div class="catalog__block">
-					<div class="recommended__elems ficb recommended__elems_first">
-						<div class="recommended__block recommended__block_first">
-							<div class="recommended__block_elems ficb">
-								<span class="recommended__block_intro">Летнее утро</span>
-								<span class="recommended__block_price">3 600 руб</span>
+					<div class="catalog__grid">
+						{% for bouquet in bouquets %}
+							<div class="catalog__card">
+								{% if bouquet.image %}
+									<img src="{{ bouquet.image.url }}" alt="{{ bouquet.title }}" class="catalog__card_img">
+								{% endif %}
+								<div class="catalog__card_info">
+									<span class="catalog__card_title">{{ bouquet.title }}</span>
+									<span class="catalog__card_price">{{ bouquet.price|floatformat:"-2" }} руб</span>
+								</div>
 							</div>
-						</div>
-						<div class="recommended__block recommended__block_sec">
-							<div class="recommended__block_elems ficb">
-								<span class="recommended__block_intro">Пламенный закат</span>
-								<span class="recommended__block_price">3 600 руб</span>
-							</div>
-						</div>
-						<div class="recommended__block recommended__block_thr">
-							<div class="recommended__block_elems ficb">
-								<span class="recommended__block_intro">Осенний</span>
-								<span class="recommended__block_price">3 600 руб</span>
-							</div>
-						</div>
-						
-
-					</div>
-					<div class="recommended__elems ficb recommended__elems_sec">
-						<div class="recommended__block recommended__block_first">
-							<div class="recommended__block_elems ficb">
-								<span class="recommended__block_intro">Полевой</span>
-								<span class="recommended__block_price">1 600 руб</span>
-							</div>
-						</div>
-						<div class="recommended__block recommended__block_sec">
-							<div class="recommended__block_elems ficb">
-								<span class="recommended__block_intro">Весенний</span>
-								<span class="recommended__block_price">3 200 руб</span>
-							</div>
-						</div>
-						<div class="recommended__block recommended__block_thr">
-							<div class="recommended__block_elems ficb">
-								<span class="recommended__block_intro">Нежный</span>
-								<span class="recommended__block_price">2 900 руб</span>
-							</div>
-						</div>
-						
-						
+						{% empty %}
+							<p>Букеты пока не добавлены</p>
+						{% endfor %}
 					</div>
 					<button class="btn largeBtn catalog__btn">Показать ещё</button>
 				</div>

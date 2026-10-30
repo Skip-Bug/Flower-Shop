@@ -343,6 +343,34 @@ opacity: 0.3;
 .recommended__elems_sec .recommended__block_sec {
 	background: url('../img/catalog/catalogBg4.jpg') no-repeat center bottom / cover;
 }
+.catalog__grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 10px;
+}
+.catalog__card_link {
+	display: block;
+	text-decoration: none;
+}
+.catalog__card_img {
+	width: 100%;
+	height: 400px;
+	object-fit: cover;
+	display: block;
+}
+.catalog__card_info {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 15px 18px;
+	background: rgba(255, 255, 255, 0.85);
+}
+.catalog__card_title,
+.catalog__card_price {
+	font-size: 16px;
+	line-height: 103.52%;
+	color: #2D2D2D;
+}
 
 
 /*card.html*/
