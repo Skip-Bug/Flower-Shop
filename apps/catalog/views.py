@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 
 from .models import Bouquet
 
@@ -17,8 +17,9 @@ def catalog(request):
     return render(request, "catalog.html", {"bouquets": bouquets})
 
 
-def card(request):
-    return render(request, "card.html")
+def bouquet_detail(request, slug):
+    bouquet = get_object_or_404(Bouquet, slug=slug, is_active=True)
+    return render(request, "card.html", {"bouquet": bouquet})
 
 
 def consultation(request):

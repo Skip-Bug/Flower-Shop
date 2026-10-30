@@ -32,13 +32,15 @@
 					<div class="catalog__grid">
 						{% for bouquet in bouquets %}
 							<div class="catalog__card">
-								{% if bouquet.image %}
-									<img src="{{ bouquet.image.url }}" alt="{{ bouquet.title }}" class="catalog__card_img">
-								{% endif %}
-								<div class="catalog__card_info">
-									<span class="catalog__card_title">{{ bouquet.title }}</span>
-									<span class="catalog__card_price">{{ bouquet.price|floatformat:"-2" }} руб</span>
-								</div>
+								<a href="{% url 'catalog:bouquet_detail' bouquet.slug %}" class="catalog__card_link">
+									{% if bouquet.image %}
+										<img src="{{ bouquet.image.url }}" alt="{{ bouquet.title }}" class="catalog__card_img">
+									{% endif %}
+									<div class="catalog__card_info">
+										<span class="catalog__card_title">{{ bouquet.title }}</span>
+										<span class="catalog__card_price">{{ bouquet.price|floatformat:"-2" }} руб</span>
+									</div>
+								</a>
 							</div>
 						{% empty %}
 							<p>Букеты пока не добавлены</p>

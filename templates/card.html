@@ -28,49 +28,31 @@
 		<div class="container">
 			<div class="card ficb">
 				<div class="card__block card__block_first">
-					<img src="{% static 'img/cardImg.jpg' %}" alt="img" class="card__img">
+					{% if bouquet.image %}
+						<img src="{{ bouquet.image.url }}" alt="{{ bouquet.title }}" class="card__img">
+					{% endif %}
 				</div>
 				<div class="card__block card__block_sec">
-					<div class="title">Летнее утро</div>
-					<div class="card__block_price">3 600 руб</div>
-					<div class="card__elems ">
-						<span class="card__elems_intro">Состав</span>
+					<div class="title">{{ bouquet.title }}</div>
+					<div class="card__block_price">{{ bouquet.price|floatformat:"-2" }} руб</div>
+					<div class="card__elems">
+						<span class="card__elems_intro">Описание</span>
 						<div class="card__items">
-							<span class="card_items_intro">
-								Гортензия розовая - 1 шт.
-							</span>
-							<span class="card_items_intro">
-								Ветки эквалипта - 5 шт.
-							</span>
-							<span class="card_items_intro">
-								Гипсофила - 1 шт.
-							</span>
-							<span class="card_items_intro">
-								Матовая упаковка - 1 шт.
-							</span>
-							<span class="card_items_intro">
-								Лента атласная - 1 шт.
-							</span>
-							<span class="card_items_intro">
-								Рекомендация по уходу - 1 шт.
-							</span>
-							<span class="card_items_intro">
-								Открыточка с вашими пожеланиями - 1 шт.
-							</span>
-							<span class="card_items_intro">
-								Любовь флориста (бесплатно) - 1 шт.
-							</span>
+							<span class="card_items_intro">{{ bouquet.description }}</span>
 						</div>
 					</div>
-					<div class="card__elems ">
+					<div class="card__elems">
+						<span class="card__elems_intro">Состав</span>
+						<div class="card__items">
+							<span class="card_items_intro">{{ bouquet.composition|linebreaksbr }}</span>
+						</div>
+					</div>
+					<div class="card__elems">
 						<span class="card__elems_intro">Размер</span>
 						<div class="card__items">
-							<span class="card_items_intro">
-								Высота - 50 см
-							</span>
-							<span class="card_items_intro">
-								Ширина - 30 см
-							</span>
+							{% if bouquet.size %}
+								<span class="card_items_intro">{{ bouquet.size }}</span>
+							{% endif %}
 						</div>
 					</div>
 					<button class="btn largeBtn card__btn">Заказать букет</button>

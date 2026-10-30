@@ -7,6 +7,6 @@ app_name = "catalog"
 urlpatterns = [
     path("", views.index, name="index"),
     path("catalog/", views.catalog, name="catalog"),
-    path("card/", views.card, name="card"),
+    path("bouquet/<slug:slug>/", views.bouquet_detail, name="bouquet_detail"),
     path("consultation/", views.consultation, name="consultation"),
 ]
