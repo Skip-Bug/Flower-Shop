@@ -17,8 +17,8 @@
 				<nav>
 					<ul class="menu ficc">
 						<li class="menu__item"><a href="{% url 'catalog:catalog' %}" class="menu__item_link">Каталог</a></li>
-						<li class="menu__item"><a href="#" class="menu__item_link">Рекомендации</a></li>
-						<li class="menu__item"><a href="#" class="menu__item_link">Контакты</a></li>
+						<li class="menu__item"><a href="{% url 'catalog:index' %}#recommended" class="menu__item_link">Рекомендации</a></li>
+						<li class="menu__item"><a href="{% url 'catalog:index' %}#contacts" class="menu__item_link">Контакты</a></li>
 					</ul>
 				</nav>
 			</div>
@@ -33,8 +33,8 @@
 						Заявка на консультацию принята. Флорист свяжется с вами в ближайшее время.
 					</p>
 					<div class="order__form_btns ficb">
-						<button type="button" class="btn singUpConsultation__form_btn" onclick="window.location.href='{% url 'catalog:index' %}'">На главную</button>
-						<button type="button" class="btn singUpConsultation__form_btn" onclick="window.location.href='{% url 'catalog:catalog' %}'">Смотреть коллекцию</button>
+						<a href="{% url 'catalog:index' %}" class="btn singUpConsultation__form_btn">На главную</a>
+						<a href="{% url 'catalog:catalog' %}" class="btn singUpConsultation__form_btn">Смотреть коллекцию</a>
 					</div>
 				</div>
 				<div class="blockImgHiden"></div>
@@ -49,8 +49,8 @@
 				<nav>
 					<ul class="menu footer__menu ficc">
 						<li class="menu__item"><a href="{% url 'catalog:catalog' %}" class="menu__item_link">Каталог</a></li>
-						<li class="menu__item"><a href="#" class="menu__item_link">Рекомендации</a></li>
-						<li class="menu__item"><a href="#" class="menu__item_link">Контакты</a></li>
+						<li class="menu__item"><a href="{% url 'catalog:index' %}#recommended" class="menu__item_link">Рекомендации</a></li>
+						<li class="menu__item"><a href="{% url 'catalog:index' %}#contacts" class="menu__item_link">Контакты</a></li>
 					</ul>
 				</nav>
 				<hr class="line"></hr>

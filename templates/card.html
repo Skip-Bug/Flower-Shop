@@ -17,8 +17,8 @@
 				<nav>
 					<ul class="menu ficc">
 						<li class="menu__item"><a href="{% url 'catalog:catalog' %}" class="menu__item_link">Каталог</a></li>
-						<li class="menu__item"><a href="#" class="menu__item_link">Рекомендации</a></li>
-						<li class="menu__item"><a href="#" class="menu__item_link">Контакты</a></li>
+						<li class="menu__item"><a href="{% url 'catalog:index' %}#recommended" class="menu__item_link">Рекомендации</a></li>
+						<li class="menu__item"><a href="{% url 'catalog:index' %}#contacts" class="menu__item_link">Контакты</a></li>
 					</ul>
 				</nav>
 			</div>
@@ -55,7 +55,7 @@
 							{% endif %}
 						</div>
 					</div>
-					<button class="btn largeBtn card__btn" onclick="window.location.href='{% url 'orders:order' bouquet.slug %}'">Заказать букет</button>
+					<a href="{% url 'orders:order' bouquet.slug %}" class="btn largeBtn card__btn">Заказать букет</a>
 				</div>
 			</div>
 		</div>
@@ -64,11 +64,9 @@
 		<div class="container">
 			<div class="consultation">
 				<div class="title consultation__title">Оставьте заявку на консультацию</div>
-				<form action="#" class="consultation__form">
-					<input type="text" name="fname" class="consultation__form_input" placeholder="Введите Имя" required>
-					<input type="text" name="tel" class="consultation__form_input" placeholder="+ 7 (999) 000 00 00" required>
-					<button type="submit" class="consultation__form_btn">Отправить</button>
-				</form>
+				<div class="consultation__form ficc">
+					<a href="{% url 'orders:consultation' %}" class="btn consultation__form_btn">Оставить заявку</a>
+				</div>
 			</div>
 		</div>
 	</section>
@@ -79,8 +77,8 @@
 				<nav>
 					<ul class="menu footer__menu ficc">
 						<li class="menu__item"><a href="{% url 'catalog:catalog' %}" class="menu__item_link">Каталог</a></li>
-						<li class="menu__item"><a href="#" class="menu__item_link">Рекомендации</a></li>
-						<li class="menu__item"><a href="#" class="menu__item_link">Контакты</a></li>
+						<li class="menu__item"><a href="{% url 'catalog:index' %}#recommended" class="menu__item_link">Рекомендации</a></li>
+						<li class="menu__item"><a href="{% url 'catalog:index' %}#contacts" class="menu__item_link">Контакты</a></li>
 					</ul>
 				</nav>
 				<hr class="line"></hr>

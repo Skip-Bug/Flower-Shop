@@ -17,8 +17,8 @@
 				<nav>
 					<ul class="menu ficc">
 						<li class="menu__item"><a href="{% url 'catalog:catalog' %}" class="menu__item_link">Каталог</a></li>
-						<li class="menu__item"><a href="#" class="menu__item_link">Рекомендации</a></li>
-						<li class="menu__item"><a href="#" class="menu__item_link">Контакты</a></li>
+						<li class="menu__item"><a href="{% url 'catalog:index' %}#recommended" class="menu__item_link">Рекомендации</a></li>
+						<li class="menu__item"><a href="{% url 'catalog:index' %}#contacts" class="menu__item_link">Контакты</a></li>
 					</ul>
 				</nav>
 			</div>
@@ -55,7 +55,7 @@
 							<div class="order__form_line"></div>
 							<div class="order__form_btns ficb">
 								<button type="submit" class="btn order__form_pay">Подтвердить заказ</button>
-								<button type="button" class="btn order__form_btn" onclick="window.location.href='{% url 'catalog:bouquet_detail' bouquet.slug %}'">Назад</button>
+								<a href="{% url 'catalog:bouquet_detail' bouquet.slug %}" class="btn order__form_btn">Назад</a>
 							</div>
 						</form>
 					</div>
@@ -72,8 +72,8 @@
 				<nav>
 					<ul class="menu footer__menu ficc">
 						<li class="menu__item"><a href="{% url 'catalog:catalog' %}" class="menu__item_link">Каталог</a></li>
-						<li class="menu__item"><a href="#" class="menu__item_link">Рекомендации</a></li>
-						<li class="menu__item"><a href="#" class="menu__item_link">Контакты</a></li>
+						<li class="menu__item"><a href="{% url 'catalog:index' %}#recommended" class="menu__item_link">Рекомендации</a></li>
+						<li class="menu__item"><a href="{% url 'catalog:index' %}#contacts" class="menu__item_link">Контакты</a></li>
 					</ul>
 				</nav>
 				<hr class="line"></hr>
