@@ -1,7 +1,11 @@
-from django.shortcuts import redirect, render
+from decimal import Decimal
 
-from apps.catalog.models import Event
+from django.shortcuts import get_object_or_404, redirect, render
 
+from apps.catalog.models import Bouquet, Event
+
+from .forms import OrderForm
+from .models import Order
 from .services import pick_bouquet_for_quiz
 
 
@@ -29,9 +33,34 @@ def result(request):
     return render(request, "result.html", {"bouquet": bouquet})
 
 
-def order(request):
-    return render(request, "order.html")
+def order(request, slug):
+    bouquet = get_object_or_404(Bouquet, slug=slug, is_active=True)
+
+    if request.method == "POST":
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            new_order = form.save(commit=False)
+            new_order.bouquet = bouquet
+            new_order.bouquet_snapshot = {
+                "id": bouquet.id,
+                "title": bouquet.title,
+                "slug": bouquet.slug,
+                "price": str(bouquet.price),
+                "description": bouquet.description,
+                "composition": bouquet.composition,
+                "size": bouquet.size,
+            }
+            new_order.bouquet_price = bouquet.price
+            new_order.delivery_fee = Decimal("0")
+            new_order.total_price = bouquet.price + new_order.delivery_fee
+            new_order.save()
+            return redirect("orders:order_done", order_id=new_order.pk)
+    else:
+        form = OrderForm()
+
+    return render(request, "order.html", {"form": form, "bouquet": bouquet})
 
 
-def order_step(request):
-    return render(request, "order-step.html")
+def order_done(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+    return render(request, "order_done.html", {"order": order})

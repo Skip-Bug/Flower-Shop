@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% load static %}
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Flower Shop</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Unbounded:wght@700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+	<header id="header">
+		<div class="container">
+			<div class="header ficb">
+				<a href="{% url 'catalog:index' %}"><img src="{% static 'img/logo.svg' %}" alt="logo" class="logo"></a>
+				<nav>
+					<ul class="menu ficc">
+						<li class="menu__item"><a href="{% url 'catalog:catalog' %}" class="menu__item_link">Каталог</a></li>
+						<li class="menu__item"><a href="#" class="menu__item_link">Рекомендации</a></li>
+						<li class="menu__item"><a href="#" class="menu__item_link">Контакты</a></li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+	</header>
+	<section id="order">
+		<div class="container">
+			<div class="order">
+				<div class="order__block">
+					<div class="order_items">
+						<div class="title">Спасибо за заказ!</div>
+						<p class="card__items_text card__items_text__first">
+							Заказ №{{ order.pk }} принят. Мы свяжемся с вами по телефону
+							{{ order.customer_phone }} для подтверждения.
+						</p>
+						<p class="order__done_text">
+							Букет: {{ order.bouquet_snapshot.title|default:order.bouquet.title }}<br>
+							Адрес: {{ order.delivery_address }}<br>
+							Время доставки: {{ order.get_delivery_time_display }}<br>
+							Итого: {{ order.total_price|floatformat:"-2" }} ₽
+						</p>
+						<div class="order__form_btns ficb">
+							<button type="button" class="btn order__form_pay" onclick="window.location.href='{% url 'catalog:catalog' %}'">Смотреть коллекцию</button>
+							<button type="button" class="btn order__form_btn" onclick="window.location.href='{% url 'catalog:index' %}'">На главную</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<img src="{% static 'img/orderImg.jpg' %}" alt="orderImg" class="order__img">
+	</section>
+	<footer id="footer">
+		<div class="container">
+			<div class="footer">
+				<a href="{% url 'catalog:index' %}"><img src="{% static 'img/logo.svg' %}" alt="logo" class="logo footer__logo"></a>
+				<nav>
+					<ul class="menu footer__menu ficc">
+						<li class="menu__item"><a href="{% url 'catalog:catalog' %}" class="menu__item_link">Каталог</a></li>
+						<li class="menu__item"><a href="#" class="menu__item_link">Рекомендации</a></li>
+						<li class="menu__item"><a href="#" class="menu__item_link">Контакты</a></li>
+					</ul>
+				</nav>
+				<hr class="line"></hr>
+				<a href="#" class="footer__poli">Политика конфиденциальности</a>
+				<p class="footer_cop">©️2022. FlowerShop. Все права защищены</p>
+			</div>
+		</div>
+	</footer>
+</body>
+</html>
