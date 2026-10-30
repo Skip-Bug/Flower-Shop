@@ -1,8 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+
+from apps.catalog.models import Event
 
 
 def quiz(request):
-    return render(request, "quiz.html")
+    if request.method == "POST":
+        request.session["event"] = request.POST.get("event")
+        return redirect("orders:quiz_step")
+
+    events = Event.objects.filter(is_active=True)
+    return render(request, "quiz.html", {"events": events})
 
 
 def quiz_step(request):
