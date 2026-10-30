@@ -20,7 +20,3 @@ def catalog(request):
 def bouquet_detail(request, slug):
     bouquet = get_object_or_404(Bouquet, slug=slug, is_active=True)
     return render(request, "card.html", {"bouquet": bouquet})
-
-
-def consultation(request):
-    return render(request, "consultation.html")

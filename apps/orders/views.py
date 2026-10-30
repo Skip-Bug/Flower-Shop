@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from apps.catalog.models import Bouquet, Event
 
-from .forms import OrderForm
+from .forms import ConsultationRequestForm, OrderForm
 from .models import Order
 from .services import pick_bouquet_for_quiz
 
@@ -64,3 +64,24 @@ def order(request, slug):
 def order_done(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     return render(request, "order_done.html", {"order": order})
+
+
+def consultation(request):
+    form = ConsultationRequestForm()
+    return render(request, "consultation.html", {"form": form})
+
+
+def consultation_send(request):
+    if request.method != "POST":
+        return redirect("orders:consultation")
+
+    form = ConsultationRequestForm(request.POST)
+    if form.is_valid():
+        form.save()
+        return redirect("orders:consultation_done")
+
+    return render(request, "consultation.html", {"form": form})
+
+
+def consultation_done(request):
+    return render(request, "consultation_done.html")
