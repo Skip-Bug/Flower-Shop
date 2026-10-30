@@ -6,7 +6,9 @@ from .models import Bouquet, Event
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ("name", "slug")
+    list_display = ("id", "name", "slug", "is_active", "order")
+    list_filter = ("is_active",)
+    list_editable = ("is_active", "order")
     prepopulated_fields = {"slug": ("name",)}
     search_fields = ("name",)
 
