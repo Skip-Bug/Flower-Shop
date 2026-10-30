@@ -2,6 +2,8 @@ from django.shortcuts import redirect, render
 
 from apps.catalog.models import Event
 
+from .services import pick_bouquet_for_quiz
+
 
 def quiz(request):
     if request.method == "POST":
@@ -21,7 +23,10 @@ def quiz_step(request):
 
 
 def result(request):
-    return render(request, "result.html")
+    occasion_slug = request.session.get("event")
+    budget_key = request.session.get("budget")
+    bouquet = pick_bouquet_for_quiz(occasion_slug, budget_key)
+    return render(request, "result.html", {"bouquet": bouquet})
 
 
 def order(request):

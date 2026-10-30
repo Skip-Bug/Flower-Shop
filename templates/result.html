@@ -28,42 +28,53 @@
 		<div class="container">
 			<div class="result p100">
 				<div class="title">Мы подобрали специально для Вас</div>
+				{% if bouquet %}
 				<div class="result__block ficb">
 					<div class="result__elems">
 						<div class="card__elems ">
 							<span class="card__elems_intro">Описание:</span>
 							<div class="card__items">
-								<p class="card__items_text card__items_text__first">
-									Этот букет передает атмосферу летнего утра в деревне. Букет создан из свежих полевых цветов, собранных в самом сердце природы. В состав букета входит ромашка, пионовидная роза, альстромерия, эустома, веточка эвкалипта, декоративная зелень. Все цветы собраны вручную и аккуратно высушены. 
-								</p>
-								<p class="card__items_text">
-									Букеты из полевых цветов - это не только прекрасный подарок, но и отличный способ выразить свои чувства.
-								</p>
+								<p class="card__items_text card__items_text__first">{{ bouquet.description }}</p>
 							</div>
 						</div>
 						<div class="card__elems ">
 							<span class="card__elems_intro">Состав:</span>
 							<div class="card__items">
-								<p class="card__items_text card__items_text__first">
-									Альстромерия белая 1 шт., Эустома белая 1 шт, Ромашка 1 шт, Роза пионовидная 1 шт 
-								</p>
-								
+								<p class="card__items_text card__items_text__first">{{ bouquet.composition }}</p>
 							</div>
 						</div>
 					</div>
-					<img src="{% static 'img/cardImg.jpg' %}" alt="result Img" class="result__block_img">
+					{% if bouquet.image %}
+						<img src="{{ bouquet.image.url }}" alt="{{ bouquet.title }}" class="result__block_img">
+					{% endif %}
 					<div class="result__items">
-						<div class="title result__items_title">Летнее утро</div>
-						<div class="result__items_price">3 600 руб</div>
+						<div class="title result__items_title">{{ bouquet.title }}</div>
+						<div class="result__items_price">{{ bouquet.price|floatformat:"-2" }} руб</div>
 						<button class="btn result__items_btn">Заказать букет</button>
 						<hr class="result__items_line" />
 						<div class="result__items_intro">Хотите что-то более специальное?</div>
 						<div class="result__items_block">
-							<button class="btn largeBtn result__items_block__btn">Смотреть всю коллекцию</button>
-							<button class="btn largeBtn result__items_block__btn">Заказать консультацию</button>
+							<button class="btn largeBtn result__items_block__btn" onclick="window.location.href='{% url 'catalog:catalog' %}'">Смотреть всю коллекцию</button>
+							<button class="btn largeBtn result__items_block__btn" onclick="window.location.href='{% url 'catalog:consultation' %}'">Заказать консультацию</button>
 						</div>
 					</div>
-				</div>	
+				</div>
+				{% else %}
+				<p class="card__items_text">
+					К сожалению, подходящий букет не нашёлся. Оставьте заявку на консультацию — флорист перезвонит и подберёт для вас что-то особенное.
+				</p>
+				<div class="result__items_block">
+					<button class="btn largeBtn result__items_block__btn" onclick="window.location.href='{% url 'catalog:consultation' %}'">Заказать консультацию</button>
+					<button class="btn largeBtn result__items_block__btn" onclick="window.location.href='{% url 'catalog:catalog' %}'">Смотреть всю коллекцию</button>
+				</div>
+				<div id="noMatchModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="noMatchTitle">
+					<div class="modal__overlay" data-modal-close></div>
+					<div class="modal__window">
+						<button type="button" class="modal__close" data-modal-close aria-label="Закрыть">&times;</button>
+						<p id="noMatchTitle" class="modal__text">Подходящего букета нет в наличии. Свяжитесь с нами для уточнения.</p>
+					</div>
+				</div>
+				{% endif %}
 			</div>
 		</div>
 	</section>
@@ -124,5 +135,24 @@
 			</div>
 		</div>
 	</footer>
+	<script>
+		(function () {
+			var modal = document.getElementById('noMatchModal');
+			if (!modal) {
+				return;
+			}
+			function close() {
+				modal.hidden = true;
+			}
+			modal.querySelectorAll('[data-modal-close]').forEach(function (trigger) {
+				trigger.addEventListener('click', close);
+			});
+			document.addEventListener('keydown', function (event) {
+				if (event.key === 'Escape') {
+					close();
+				}
+			});
+		})();
+	</script>
 </body>
 </html>
