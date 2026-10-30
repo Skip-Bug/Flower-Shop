@@ -62,3 +62,18 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Заказ #{self.id} - {self.customer_name}"
+
+
+class ConsultationRequest(models.Model):
+    customer_name = models.CharField("Имя клиента", max_length=100, blank=True)
+    phone = models.CharField("Телефон", max_length=20)
+    created_at = models.DateTimeField("Создан", auto_now_add=True)
+    is_processed = models.BooleanField("Обработано", default=False)
+
+    class Meta:
+        verbose_name = "Заявка на консультацию"
+        verbose_name_plural = "Заявки на консультации"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Консультация #{self.pk} - {self.customer_name or self.phone}"
