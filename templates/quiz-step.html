@@ -28,25 +28,28 @@
 		<div class="container">
 			<div class="quiz">
 				<div class="quiz__back ">
-					<a href="#" class="quiz__back_link fic"><img src="{% static 'img/arrow-left.svg' %}" alt="arrow-left" class="arrowLeft">
+					<a href="{% url 'orders:quiz' %}" class="quiz__back_link fic"><img src="{% static 'img/arrow-left.svg' %}" alt="arrow-left" class="arrowLeft">
 					<span class="quiz__back_intro">Назад</span></a>
 				</div>
 				<div class="quiz__block">
 					<h1 class="quiz__title">На какой бюджет рассчитываете?</h1>
-					<div class="quiz__elems fic">
-						<button class="quiz__elem">До 1 000 руб</button>
-						<button class="quiz__elem">1 000 - 5 000 руб</button>
-						<button class="quiz__elem">от 5 000 руб</button>
-						<button class="quiz__elem">Не имеет значения</button>
-					</div>
+					<form method="post">
+						{% csrf_token %}
+						<div class="quiz__elems fic">
+							<button type="submit" name="budget" value="low" class="quiz__elem">До 1 000 руб</button>
+							<button type="submit" name="budget" value="medium" class="quiz__elem">1 000 - 5 000 руб</button>
+							<button type="submit" name="budget" value="high" class="quiz__elem">от 5 000 руб</button>
+							<button type="submit" name="budget" value="any" class="quiz__elem">Не имеет значения</button>
+						</div>
+					</form>
 					<div class="quiz__progress">
 						<div class="quiz__progress_step">
-							<span class="quiz__progress_num">1</span>
+							<span class="quiz__progress_num">2</span>
 							<span class="quiz__progress_in"> шаг из </span>
 							<span class="quiz__progress_num">2</span>
 						</div>
 						<div class="quiz__progress_line">
-							<div class="quiz__progress_lineActive"></div>
+							<div class="quiz__progress_lineFinish"></div>
 						</div>
 					</div>
 				</div>

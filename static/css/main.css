@@ -511,6 +511,19 @@ margin-bottom: 30px;
 	width: 8px;
 	height: 8px;
 }
+.quiz__progress_lineStart,
+.quiz__progress_lineFinish {
+	position: absolute;
+	background: #17CF97;
+	border-radius: 10px;
+	height: 8px;
+}
+.quiz__progress_lineStart {
+	width: 50%;
+}
+.quiz__progress_lineFinish {
+	width: 100%;
+}
 
 /*result.html*/
 .result__elems {

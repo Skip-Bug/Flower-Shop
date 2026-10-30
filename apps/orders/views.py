@@ -13,6 +13,10 @@ def quiz(request):
 
 
 def quiz_step(request):
+    if request.method == "POST":
+        request.session["budget"] = request.POST.get("budget")
+        return redirect("orders:result")
+
     return render(request, "quiz-step.html")
 
 
