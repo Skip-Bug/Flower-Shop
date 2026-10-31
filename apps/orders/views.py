@@ -126,12 +126,8 @@ def payment_success(request, order_id):
 def florist_dashboard(request):
     """Показывает список заказов для флористов"""
     active_statuses = [
-        "new",
         "pending_cash",
         "paid",
-        "assembling",
-        "assembled",
-        "delivering",
     ]
 
     orders = Order.objects.filter(status__in=active_statuses).order_by("created_at")

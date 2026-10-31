@@ -5,7 +5,12 @@ from .models import Bouquet
 
 
 def index(request):
-    recommended_bouquets = Bouquet.objects.filter(is_active=True).order_by("?")[:3]
+    recommended_bouquets = (
+        Bouquet.objects.filter(is_active=True)
+        .prefetch_related("events")
+        # TO-DO если букетов станет очень много лучше поменять чтоб не мучить БД
+        .order_by("?")[:3]
+    )
     return render(
         request,
         "index.html",
