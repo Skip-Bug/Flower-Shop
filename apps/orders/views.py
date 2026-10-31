@@ -3,6 +3,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from yookassa import Configuration, Payment
+from yookassa.domain.exceptions import ApiError, NotFoundError
 
 from apps.catalog.models import Bouquet, Event
 
@@ -104,13 +105,13 @@ def payment_success(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     request.session.pop("last_order_id", None)
 
-    # TO DO: В MVP мы просто меняем статус, если заказ новый.
-    # В проде здесь ОБЯЗАТЕЛЬНО нужно делать запрос к API ЮKassa (Payment.find_one)
-    # чтобы убедиться, что деньги реально пришли, а не просто человек вернулся по ссылке.
     Configuration.account_id = settings.YOOKASSA_SHOP_ID
     Configuration.secret_key = settings.YOOKASSA_SECRET_KEY
 
-    payment = Payment.find_one(order.payment_id)
+    try:
+        payment = Payment.find_one(order.payment_id)
+    except (NotFoundError, ApiError):
+        return render(request, "order_done.html", {"order": order})
     if payment.status == "succeeded":
         order.status = "paid"
         order.paid_at = timezone.now()
