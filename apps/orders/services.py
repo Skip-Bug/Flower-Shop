@@ -1,5 +1,4 @@
 import random
-import uuid
 from decimal import Decimal
 
 from django.conf import settings
@@ -47,8 +46,6 @@ def create_yookassa_payment(order, request):
     Configuration.account_id = settings.YOOKASSA_SHOP_ID
     Configuration.secret_key = settings.YOOKASSA_SECRET_KEY
 
-    idempotence_key = str(uuid.uuid4())
-
     return_url = request.build_absolute_uri(
         reverse("orders:payment_success", kwargs={"order_id": order.id})
     )
@@ -60,7 +57,7 @@ def create_yookassa_payment(order, request):
             "capture": True,
             "description": f"Заказ №{order.id} - FlowerShop",
         },
-        idempotence_key,
+        idempotence_key=f"order-{order.id}",
     )
 
     return payment
