@@ -18,8 +18,9 @@ def pick_bouquet_for_quiz(occasion_slug, budget_key):
         return None
 
     matched = Bouquet.objects.filter(
-        is_active=True, events__slug=occasion_slug
-    ).distinct()
+        is_active=True,
+        events__slug=occasion_slug,
+    )
 
     price_range = BUDGET_PRICE_RANGES.get(budget_key)
     if price_range:
@@ -28,7 +29,8 @@ def pick_bouquet_for_quiz(occasion_slug, budget_key):
         if high is not None:
             matched = matched.filter(price__lt=high)
 
-    bouquets = list(matched)
-    if not bouquets:
+    count = matched.count()
+    if count == 0:
         return None
-    return random.choice(bouquets)
+    random_index = random.randint(0, count - 1)
+    return matched[random_index]
