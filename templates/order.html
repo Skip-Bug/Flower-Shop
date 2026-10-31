@@ -29,6 +29,14 @@
 									<label for="{{ radio.id_for_label }}" class="radioLable">{{ radio.choice_label }}</label>
 								</div>
 								{% endfor %}
+								</div>
+								<div class="order__form_btns fic">
+								{% for radio in form.payment_method %}
+								<div class="order__form_radioBlock">
+									{{ radio.tag }}
+									<label for="{{ radio.id_for_label }}" class="radioLable">{{ radio.choice_label }}</label>
+								</div>
+								{% endfor %}
 							</div>
 							<div class="order__form_line"></div>
 							<div class="order__form_btns ficb">

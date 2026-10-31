@@ -1,7 +1,13 @@
 import random
+import uuid
 from decimal import Decimal
 
+from django.conf import settings
+from django.urls import reverse
+from yookassa import Configuration, Payment
+
 from apps.catalog.models import Bouquet
+from apps.orders.models import SiteSettings
 
 BUDGET_PRICE_RANGES = {
     "low": (Decimal("0"), Decimal("1000")),
@@ -34,3 +40,54 @@ def pick_bouquet_for_quiz(occasion_slug, budget_key):
         return None
     random_index = random.randint(0, count - 1)
     return matched[random_index]
+
+
+def create_yookassa_payment(order, request):
+    """Создает платеж в ЮKassa и возвращает объект payment."""
+    Configuration.account_id = settings.YOOKASSA_SHOP_ID
+    Configuration.secret_key = settings.YOOKASSA_SECRET_KEY
+
+    idempotence_key = str(uuid.uuid4())
+
+    return_url = request.build_absolute_uri(
+        reverse("orders:payment_success", kwargs={"order_id": order.id})
+    )
+
+    payment = Payment.create(
+        {
+            "amount": {"value": str(order.total_price), "currency": "RUB"},
+            "confirmation": {"type": "redirect", "return_url": return_url},
+            "capture": True,
+            "description": f"Заказ №{order.id} - FlowerShop",
+        },
+        idempotence_key,
+    )
+
+    return payment
+
+
+def build_bouquet_snapshot(bouquet):
+    """Возвращает словарь с данными букета на момент заказа."""
+    return {
+        "id": bouquet.id,
+        "title": bouquet.title,
+        "slug": bouquet.slug,
+        "price": str(bouquet.price),
+        "description": bouquet.description,
+        "composition": bouquet.composition,
+        "size": bouquet.size,
+    }
+
+
+def build_order_from_form(form, bouquet):
+    """Создает объект заказа из формы несохраняя его в БД."""
+    order = form.save(commit=False)
+    order.bouquet = bouquet
+    order.bouquet_snapshot = build_bouquet_snapshot(bouquet)
+
+    settings_obj = SiteSettings.objects.get(id=1)
+    order.bouquet_price = bouquet.price
+    order.delivery_fee = settings_obj.delivery_fee
+    order.total_price = bouquet.price + order.delivery_fee
+
+    return order

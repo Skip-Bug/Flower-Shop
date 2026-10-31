@@ -13,4 +13,9 @@ urlpatterns = [
     path("consultation/", views.consultation, name="consultation"),
     path("consultation/send/", views.consultation_send, name="consultation_send"),
     path("consultation/done/", views.consultation_done, name="consultation_done"),
+    path(
+        "order/<int:order_id>/payment-success/",
+        views.payment_success,
+        name="payment_success",
+    ),
 ]
