@@ -39,6 +39,12 @@
 								{% endfor %}
 							</div>
 							<div class="order__form_line"></div>
+							<div class="chekbox fic" style="margin-top: 20px;">
+                                {{ form.consent }}
+                                <label for="{{ form.consent.id_for_label }}" class="chekbox__intro" style="opacity: 0.7; font-size: 14px;">
+                                    Я согласен(а) с <a href="{% static 'docs/privacy.pdf' %}" target="_blank" style="color: #17CF97; opacity: 1; text-decoration: underline;">политикой конфиденциальности</a>
+                                </label>
+                            </div>
 							<div class="order__form_btns ficb">
 								<button type="submit" class="btn order__form_pay">Подтвердить заказ</button>
 								<a href="{% url 'catalog:bouquet_detail' bouquet.slug %}" class="btn order__form_btn">Назад</a>
