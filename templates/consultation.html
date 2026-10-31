@@ -18,7 +18,9 @@
 					{% endif %}
 					<div class="chekbox fic">
 						{{ form.consent }}
-						<label for="{{ form.consent.id_for_label }}" class="chekbox__intro">Я согласен(а) с политикой конфиденциальности</label>
+						<label for="{{ form.consent.id_for_label }}" class="chekbox__intro">
+							Я согласен(а) с <a href="{% static 'docs/privacy.pdf' %}" target="_blank" style="color: #17CF97; opacity: 1; text-decoration: underline;">политикой конфиденциальности</a>
+						</label>
 					</div>
 					<button type="submit" class="btn singUpConsultation__form_btn">Отправить</button>
 				</form>

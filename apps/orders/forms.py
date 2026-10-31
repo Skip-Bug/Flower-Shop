@@ -4,6 +4,17 @@ from .models import ConsultationRequest, Order
 
 
 class OrderForm(forms.ModelForm):
+    consent = forms.BooleanField(
+        required=True,
+        label="Я согласен(а) с политикой конфиденциальности",
+        error_messages={
+            "required": "Необходимо согласие с политикой конфиденциальности"
+        },
+        widget=forms.CheckboxInput(
+            attrs={"style": "margin-right: 10px; cursor: pointer;"}
+        ),
+    )
+
     class Meta:
         model = Order
         fields = [
