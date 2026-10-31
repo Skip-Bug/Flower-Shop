@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
 
 from .models import Bouquet
@@ -13,8 +14,13 @@ def index(request):
 
 
 def catalog(request):
-    bouquets = Bouquet.objects.filter(is_active=True).prefetch_related("events")
-    return render(request, "catalog.html", {"bouquets": bouquets})
+    bouquets_list = Bouquet.objects.filter(is_active=True).prefetch_related("events")
+
+    paginator = Paginator(bouquets_list, 6)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "catalog.html", {"page_obj": page_obj})
 
 
 def bouquet_detail(request, slug):
