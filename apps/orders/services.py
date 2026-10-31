@@ -25,6 +25,7 @@ def pick_bouquet_for_quiz(occasion_slug, budget_key):
     matched = Bouquet.objects.filter(
         is_active=True,
         events__slug=occasion_slug,
+        events__is_active=True,
     )
 
     price_range = BUDGET_PRICE_RANGES.get(budget_key)
@@ -57,7 +58,7 @@ def create_yookassa_payment(order, request):
             "capture": True,
             "description": f"Заказ №{order.id} - FlowerShop",
         },
-        idempotence_key=f"order-{order.id}",
+        idempotency_key=f"order-{order.id}",
     )
 
     return payment
