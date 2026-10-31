@@ -1,36 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "_base.html" %}
 
-{% load static %}
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Flower Shop</title>
-	<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Unbounded:wght@700&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="{% static 'css/main.css' %}">	
-</head>
-<body>
-	<header id="header">
-		<div class="container">
-			<div class="header ficb">
-				<a href="{% url 'catalog:index' %}"><img src="{% static 'img/logo.svg' %}" alt="logo" class="logo"></a>
-				<nav>
-					<ul class="menu ficc">
-						<li class="menu__item"><a href="{% url 'catalog:catalog' %}" class="menu__item_link">Каталог</a></li>
-						<li class="menu__item"><a href="{% url 'catalog:index' %}#recommended" class="menu__item_link">Рекомендации</a></li>
-						<li class="menu__item"><a href="{% url 'catalog:index' %}#contacts" class="menu__item_link">Контакты</a></li>
-					</ul>
-				</nav>
-			</div>
-		</div>
-	</header>
+{% block content %}
 	<section id="catalog">
 		<div class="container p100">
 			<div class="catalog">
 				<div class="title">Все букеты</div>
 				<div class="catalog__block">
 					<div class="catalog__grid">
-						{% for bouquet in bouquets %}
+						{% for bouquet in page_obj %}
 						<div class="catalog__card">
 							<a href="{% url 'catalog:bouquet_detail' bouquet.slug %}" class="catalog__card_link">
 								<div class="catalog__card_tags">
@@ -52,9 +29,9 @@
 						{% empty %}
 							<p>Букеты пока не добавлены</p>
 						{% endfor %}
-					</div>
-					<button class="btn largeBtn catalog__btn">Показать ещё</button>
-				</div>
+						{% if page_obj.has_next %}
+							<a href="?page={{ page_obj.next_page_number }}" class="btn largeBtn catalog__btn">Показать ещё</a>
+						{% endif %}
 			</div>
 		</div>
 	</section>
@@ -68,22 +45,4 @@
 			</div>
 		</div>
 	</section>
-	<footer id="footer">
-		<div class="container">
-			<div class="footer">
-				<a href="{% url 'catalog:index' %}"><img src="{% static 'img/logo.svg' %}" alt="logo" class="logo footer__logo"></a>
-				<nav>
-					<ul class="menu footer__menu ficc">
-						<li class="menu__item"><a href="{% url 'catalog:catalog' %}" class="menu__item_link">Каталог</a></li>
-						<li class="menu__item"><a href="{% url 'catalog:index' %}#recommended" class="menu__item_link">Рекомендации</a></li>
-						<li class="menu__item"><a href="{% url 'catalog:index' %}#contacts" class="menu__item_link">Контакты</a></li>
-					</ul>
-				</nav>
-				<hr class="line"></hr>
-				<a href="#" class="footer__poli">Политика конфиденциальности</a>
-				<p class="footer_cop">©️2022. FlowerShop. Все права защищены</p>
-			</div>
-		</div>
-	</footer>
-</body>
-</html>
+{% endblock %}
