@@ -37,6 +37,13 @@
 										<img src="{{ bouquet.image.url }}" alt="{{ bouquet.title }}" class="catalog__card_img">
 									{% endif %}
 									<div class="catalog__card_info">
+										{% if bouquet.events.all %}
+										<div class="catalog__card_tags">
+											{% for event in bouquet.events.all %}
+												<span class="badge">{{ event.name }}</span>
+											{% endfor %}
+										</div>
+										{% endif %}
 										<span class="catalog__card_title">{{ bouquet.title }}</span>
 										<span class="catalog__card_price">{{ bouquet.price|floatformat:"-2" }} руб</span>
 									</div>

@@ -864,3 +864,19 @@ color: #2D2D2D;
 
 opacity: 0.3;
 }
+.catalog__card_tags {
+    display: flex;
+    flex-wrap: wrap;       
+    gap: 5px;             
+    margin-bottom: 8px;
+}
+
+.badge {
+    background: #D9FAF1;
+    color: #17CF97;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    text-transform: uppercase;
+    white-space: nowrap;   
+}
