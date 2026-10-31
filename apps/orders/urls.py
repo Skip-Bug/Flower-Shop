@@ -18,4 +18,5 @@ urlpatterns = [
         views.payment_success,
         name="payment_success",
     ),
+    path("florist/", views.florist_dashboard, name="florist_dashboard"),
 ]
