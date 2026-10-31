@@ -80,12 +80,12 @@ def build_bouquet_snapshot(bouquet):
 
 
 def build_order_from_form(form, bouquet):
-    """Создает объект заказа из формы, но НЕ сохраняет его в БД."""
+    """Создает объект заказа из формы несохраняя его в БД."""
     order = form.save(commit=False)
     order.bouquet = bouquet
     order.bouquet_snapshot = build_bouquet_snapshot(bouquet)
 
-    settings_obj, _ = SiteSettings.objects.get_or_create(id=1)
+    settings_obj = SiteSettings.objects.get(id=1)
     order.bouquet_price = bouquet.price
     order.delivery_fee = settings_obj.delivery_fee
     order.total_price = bouquet.price + order.delivery_fee
