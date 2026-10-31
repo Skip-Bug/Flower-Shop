@@ -864,19 +864,32 @@ color: #2D2D2D;
 
 opacity: 0.3;
 }
+.catalog__card {
+    position: relative;
+}
+
+.catalog__card_link {
+    display: block;
+    text-decoration: none;
+}
+
 .catalog__card_tags {
+    position: absolute; 
+    top: 10px;
+    left: 10px;
     display: flex;
-    flex-wrap: wrap;       
-    gap: 5px;             
-    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 5px;
+    z-index: 2;
 }
 
 .badge {
-    background: #D9FAF1;
-    color: #17CF97;
-    padding: 3px 8px;
+    background: rgba(217, 250, 241, 0.9); 
+    padding: 4px 10px;
     border-radius: 10px;
-    font-size: 11px;
+    font-size: 10px;
+    font-weight: 700;
     text-transform: uppercase;
-    white-space: nowrap;   
+    white-space: nowrap;
+    backdrop-filter: blur(2px);
 }
