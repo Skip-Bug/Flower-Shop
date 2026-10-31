@@ -1,11 +1,16 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 
 from apps.catalog.models import Bouquet, Event
 
 from .forms import ConsultationRequestForm, OrderForm
-from .models import Order, SiteSettings
-from .services import pick_bouquet_for_quiz
+from .models import Order
+from .services import (
+    build_order_from_form,
+    create_yookassa_payment,
+    pick_bouquet_for_quiz,
+)
 
 
 def quiz(request):
@@ -35,33 +40,26 @@ def result(request):
 def order(request, slug):
     bouquet = get_object_or_404(Bouquet, slug=slug, is_active=True)
 
-    if request.method == "POST":
-        form = OrderForm(request.POST)
-        if form.is_valid():
-            new_order = form.save(commit=False)
-            new_order.bouquet = bouquet
-            new_order.bouquet_snapshot = {
-                "id": bouquet.id,
-                "title": bouquet.title,
-                "slug": bouquet.slug,
-                "price": str(bouquet.price),
-                "description": bouquet.description,
-                "composition": bouquet.composition,
-                "size": bouquet.size,
-            }
-            settings_obj, _ = SiteSettings.objects.get_or_create(id=1)
-
-            new_order.bouquet_price = bouquet.price
-            new_order.delivery_fee = settings_obj.delivery_fee
-            new_order.total_price = bouquet.price + new_order.delivery_fee
-
-            new_order.save()
-            request.session["last_order_id"] = new_order.id
-            return redirect("orders:order_done", order_id=new_order.pk)
-    else:
+    if request.method == "GET":
         form = OrderForm()
+        return render(request, "order.html", {"form": form, "bouquet": bouquet})
 
-    return render(request, "order.html", {"form": form, "bouquet": bouquet})
+    form = OrderForm(request.POST)
+    if not form.is_valid():
+        return render(request, "order.html", {"form": form, "bouquet": bouquet})
+
+    new_order = build_order_from_form(form, bouquet)
+
+    if new_order.payment_method == "online":
+        new_order.save()
+        request.session["last_order_id"] = new_order.id
+        payment = create_yookassa_payment(new_order, request)
+        return redirect(payment.confirmation.confirmation_url)
+
+    new_order.status = "pending_cash"
+    new_order.save()
+    request.session["last_order_id"] = new_order.id
+    return redirect("orders:order_done", order_id=new_order.pk)
 
 
 def order_done(request, order_id):
@@ -91,3 +89,21 @@ def consultation_send(request):
 
 def consultation_done(request):
     return render(request, "consultation_done.html")
+
+
+def payment_success(request, order_id):
+    """Поодтвердение оплаты"""
+    if str(request.session.get("last_order_id")) != str(order_id):
+        raise Http404("Заказ не найден")
+
+    order = get_object_or_404(Order, pk=order_id)
+
+    # TO DO: В MVP мы просто меняем статус, если заказ новый.
+    # В проде здесь ОБЯЗАТЕЛЬНО нужно делать запрос к API ЮKassa (Payment.find_one)
+    # чтобы убедиться, что деньги реально пришли, а не просто человек вернулся по ссылке.
+    if order.status == "new":
+        order.status = "paid"
+        order.paid_at = timezone.now()
+        order.save()
+
+    return render(request, "order_done.html", {"order": order})

@@ -5,9 +5,11 @@ from apps.catalog.models import Bouquet
 
 class Order(models.Model):
     STATUS_CHOICES = (
-        ("new", "Новый (ожидает оплаты)"),
+        ("new", "Новый (ожидает онлайн-оплаты)"),
+        ("pending_cash", "Оплата при получении (нужно собрать)"),
         ("paid", "Оплачен (нужно собрать)"),
         ("assembling", "На сборке у флориста"),
+        ("assembled", "Собран(ждет курьера)"),
         ("delivering", "У курьера (в пути)"),
         ("completed", "Выполнен (доставлен)"),
         ("canceled", "Отменен"),
@@ -20,6 +22,10 @@ class Order(models.Model):
         T14_16 = "14_16", "с 14:00 до 16:00"
         T16_18 = "16_18", "с 16:00 до 18:00"
         T18_20 = "18_20", "с 18:00 до 20:00"
+
+    class PaymentMethod(models.TextChoices):
+        ONLINE = "online", "Онлайн (ЮKassa)"
+        CASH = "cash", "При получении"
 
     customer_name = models.CharField(max_length=100, verbose_name="Имя клиента")
     customer_phone = models.CharField(max_length=20, verbose_name="Телефон")
@@ -48,7 +54,12 @@ class Order(models.Model):
     total_price = models.DecimalField(
         max_digits=10, decimal_places=2, default=0, verbose_name="Итого, р."
     )
-
+    payment_method = models.CharField(
+        max_length=20,
+        choices=PaymentMethod.choices,
+        default=PaymentMethod.ONLINE,
+        verbose_name="Способ оплаты",
+    )
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default="new", verbose_name="Статус"
     )

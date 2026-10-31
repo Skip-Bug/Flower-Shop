@@ -11,6 +11,7 @@ class OrderForm(forms.ModelForm):
             "customer_phone",
             "delivery_address",
             "delivery_time",
+            "payment_method",
         ]
         widgets = {
             "customer_name": forms.TextInput(
@@ -32,6 +33,7 @@ class OrderForm(forms.ModelForm):
                 }
             ),
             "delivery_time": forms.RadioSelect(),
+            "payment_method": forms.RadioSelect(),
         }
 
 

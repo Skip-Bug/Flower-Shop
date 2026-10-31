@@ -5,7 +5,8 @@ from environs import Env
 env = Env()
 env.read_env()
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+YOOKASSA_SHOP_ID = env.str("YOOKASSA_SHOP_ID", default="")
+YOOKASSA_SECRET_KEY = env.str("YOOKASSA_SECRET_KEY", default="")
 
 SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
