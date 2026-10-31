@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.admin.views.decorators import staff_member_required
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -119,3 +120,16 @@ def payment_success(request, order_id):
         order.status = "canceled"
     order.save()
     return render(request, "order_done.html", {"order": order})
+
+
+@staff_member_required
+def florist_dashboard(request):
+    """Показывает список заказов для флористов"""
+    active_statuses = [
+        "pending_cash",
+        "paid",
+    ]
+
+    orders = Order.objects.filter(status__in=active_statuses).order_by("created_at")
+
+    return render(request, "florist_dashboard.html", {"orders": orders})

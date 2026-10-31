@@ -73,6 +73,7 @@ def build_bouquet_snapshot(bouquet):
         "description": bouquet.description,
         "composition": bouquet.composition,
         "size": bouquet.size,
+        "image_url": bouquet.image.url if bouquet.image else None,
     }
 
 
