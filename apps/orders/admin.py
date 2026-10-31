@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.shortcuts import redirect
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from .models import ConsultationRequest, Order, SiteSettings
 
@@ -32,6 +34,16 @@ class OrderAdmin(admin.ModelAdmin):
         "created_at",
         "paid_at",
     )
+
+    def response_change(self, request, obj):
+        next_url = request.GET.get("next")
+        if next_url and url_has_allowed_host_and_scheme(
+            next_url,
+            allowed_hosts={request.get_host()},
+            require_https=request.is_secure(),
+        ):
+            return redirect(next_url)
+        return super().response_change(request, obj)
 
 
 @admin.register(ConsultationRequest)
