@@ -65,6 +65,11 @@ class Order(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создан")
     paid_at = models.DateTimeField("Оплачен", null=True, blank=True)
+    payment_id = models.CharField(
+        "ID платежа ЮKassa",
+        max_length=100,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Заказ"
