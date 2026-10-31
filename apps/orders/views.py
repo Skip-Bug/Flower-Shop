@@ -1,12 +1,10 @@
-from decimal import Decimal
-
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 
 from apps.catalog.models import Bouquet, Event
 
 from .forms import ConsultationRequestForm, OrderForm
-from .models import Order
+from .models import Order, SiteSettings
 from .services import pick_bouquet_for_quiz
 
 
@@ -51,9 +49,12 @@ def order(request, slug):
                 "composition": bouquet.composition,
                 "size": bouquet.size,
             }
+            settings_obj, _ = SiteSettings.objects.get_or_create(id=1)
+
             new_order.bouquet_price = bouquet.price
-            new_order.delivery_fee = Decimal("0")
+            new_order.delivery_fee = settings_obj.delivery_fee
             new_order.total_price = bouquet.price + new_order.delivery_fee
+
             new_order.save()
             request.session["last_order_id"] = new_order.id
             return redirect("orders:order_done", order_id=new_order.pk)
@@ -64,7 +65,7 @@ def order(request, slug):
 
 
 def order_done(request, order_id):
-    if request.session.get("last_order_id") != order_id:
+    if str(request.session.get("last_order_id")) != str(order_id):
         raise Http404("Заказ не найден")
 
     order = get_object_or_404(Order, pk=order_id)

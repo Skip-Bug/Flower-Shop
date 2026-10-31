@@ -77,3 +77,19 @@ class ConsultationRequest(models.Model):
 
     def __str__(self):
         return f"Консультация #{self.pk} - {self.customer_name or self.phone}"
+
+
+class SiteSettings(models.Model):
+    delivery_fee = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        verbose_name="Стоимость доставки, р.",
+    )
+
+    class Meta:
+        verbose_name = "Настройки магазина"
+        verbose_name_plural = "Настройки магазина"
+
+    def __str__(self):
+        return "Глобальные настройки"
