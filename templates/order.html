@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% load static %}
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Flower Shop</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Unbounded:wght@700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="{% static 'css/main.css' %}">	
+</head>
+<body>
+	<header id="header">
+		<div class="container">
+			<div class="header ficb">
+				<a href="{% url 'catalog:index' %}"><img src="{% static 'img/logo.svg' %}" alt="logo" class="logo"></a>
+				<nav>
+					<ul class="menu ficc">
+						<li class="menu__item"><a href="{% url 'catalog:catalog' %}" class="menu__item_link">Каталог</a></li>
+						<li class="menu__item"><a href="{% url 'catalog:index' %}#recommended" class="menu__item_link">Рекомендации</a></li>
+						<li class="menu__item"><a href="{% url 'catalog:index' %}#contacts" class="menu__item_link">Контакты</a></li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+	</header>
+	<section id="order">
+		<div class="container">
+			<div class="order">
+				<div class="order__block">
+					<div class="order_items">
+						<div class="title">Оформление доставки</div>
+						<p class="order__done_text">Букет: {{ bouquet.title }} — {{ bouquet.price|floatformat:"-2" }} ₽</p>
+						<form method="post" class="order__form">
+							{% csrf_token %}
+							<div class="order__form_block ficb">
+								{{ form.customer_name }}
+								{{ form.customer_phone }}
+								{{ form.delivery_address }}
+							</div>
+							{% if form.errors %}
+							<div class="order__form_errors">
+								{{ form.non_field_errors }}
+								{% for field in form %}{{ field.errors }}{% endfor %}
+							</div>
+							{% endif %}
+							<div class="order__form_btns fic">
+								{% for radio in form.delivery_time %}
+								<div class="order__form_radioBlock">
+									{{ radio.tag }}
+									<label for="{{ radio.id_for_label }}" class="radioLable">{{ radio.choice_label }}</label>
+								</div>
+								{% endfor %}
+							</div>
+							<div class="order__form_line"></div>
+							<div class="order__form_btns ficb">
+								<button type="submit" class="btn order__form_pay">Подтвердить заказ</button>
+								<a href="{% url 'catalog:bouquet_detail' bouquet.slug %}" class="btn order__form_btn">Назад</a>
+							</div>
+						</form>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+		<img src="{% static 'img/orderImg.jpg' %}" alt="orderImg" class="order__img">
+	</section>
+	<footer id="footer">
+		<div class="container">
+			<div class="footer">
+				<a href="{% url 'catalog:index' %}"><img src="{% static 'img/logo.svg' %}" alt="logo" class="logo footer__logo"></a>
+				<nav>
+					<ul class="menu footer__menu ficc">
+						<li class="menu__item"><a href="{% url 'catalog:catalog' %}" class="menu__item_link">Каталог</a></li>
+						<li class="menu__item"><a href="{% url 'catalog:index' %}#recommended" class="menu__item_link">Рекомендации</a></li>
+						<li class="menu__item"><a href="{% url 'catalog:index' %}#contacts" class="menu__item_link">Контакты</a></li>
+					</ul>
+				</nav>
+				<hr class="line"></hr>
+				<a href="#" class="footer__poli">Политика конфиденциальности</a>
+				<p class="footer_cop">©️2022. FlowerShop. Все права защищены</p>
+			</div>
+		</div>
+	</footer>
+</body>
+</html>

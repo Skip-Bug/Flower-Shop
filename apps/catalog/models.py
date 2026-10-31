@@ -4,10 +4,13 @@ from django.db import models
 class Event(models.Model):
     name = models.CharField("Название события", max_length=100)
     slug = models.SlugField("URL-идентификатор", unique=True)
+    is_active = models.BooleanField("Активно", default=True)
+    order = models.PositiveIntegerField("Порядок", default=0)
 
     class Meta:
         verbose_name = "Событие"
         verbose_name_plural = "События"
+        ordering = ["order", "name"]
 
     def __str__(self):
         return self.name
