@@ -1,0 +1,25 @@
+name: Deploy Flower-Shop
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/flower-shop
+            git pull origin main
+            source venv/bin/activate
+            pip install -r requirements.txt
+            pip install gunicorn psycopg2-binary
+            python manage.py migrate --noinput
+            python manage.py collectstatic --noinput
+            systemctl restart flower-shop
