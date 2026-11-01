@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.shortcuts import redirect
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from .models import ConsultationRequest, Order, SiteSettings
+from .models import ConsultationRequest, Order, PromoCode, SiteSettings
 
 
 @admin.register(Order)
@@ -13,6 +13,8 @@ class OrderAdmin(admin.ModelAdmin):
         "customer_phone",
         "delivery_time",
         "status",
+        "promo_code",
+        "promo_discount",
         "total_price",
         "created_at",
         "paid_at",
@@ -30,6 +32,8 @@ class OrderAdmin(admin.ModelAdmin):
         "bouquet_snapshot",
         "bouquet_price",
         "delivery_fee",
+        "promo_code",
+        "promo_discount",
         "total_price",
         "created_at",
         "paid_at",
@@ -54,6 +58,29 @@ class ConsultationRequestAdmin(admin.ModelAdmin):
     search_fields = ("customer_name", "phone")
     list_editable = ("is_processed",)
     readonly_fields = ("created_at",)
+
+
+@admin.register(PromoCode)
+class PromoCodeAdmin(admin.ModelAdmin):
+    list_display = (
+        "code",
+        "discount_type",
+        "discount_display",
+        "min_order_sum",
+        "used_count",
+        "max_uses",
+        "valid_until",
+        "is_active",
+    )
+    list_filter = ("is_active", "discount_type")
+    search_fields = ("code", "description")
+    readonly_fields = ("used_count", "created_at")
+
+    @admin.display(description="Скидка")
+    def discount_display(self, obj):
+        if obj.discount_type == PromoCode.DISCOUNT_PERCENT:
+            return f"{obj.percent_off}%"
+        return f"{obj.amount_off} ₽"
 
 
 @admin.register(SiteSettings)

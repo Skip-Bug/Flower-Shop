@@ -14,6 +14,7 @@ from .services import (
     build_order_from_form,
     create_yookassa_payment,
     pick_bouquet_for_quiz,
+    place_order,
 )
 
 
@@ -54,17 +55,17 @@ def order(request, slug):
 
     new_order = build_order_from_form(form, bouquet)
 
+    if not place_order(form, new_order):
+        return render(request, "order.html", {"form": form, "bouquet": bouquet})
+
+    request.session["last_order_id"] = new_order.id
+
     if new_order.payment_method == "online":
-        new_order.save()
-        request.session["last_order_id"] = new_order.id
         payment = create_yookassa_payment(new_order, request)
         new_order.payment_id = payment.id
         new_order.save(update_fields=["payment_id"])
         return redirect(payment.confirmation.confirmation_url)
 
-    new_order.status = "pending_cash"
-    new_order.save()
-    request.session["last_order_id"] = new_order.id
     return redirect("orders:order_done", order_id=new_order.pk)
 
 

@@ -16,10 +16,15 @@
 								{{ form.customer_phone }}
 								{{ form.delivery_address }}
 							</div>
+							<div class="order__form_block">
+								<div class="order__form_intro">Промокод</div>
+								{{ form.promo }}
+							</div>
 							{% if form.errors %}
 							<div class="order__form_errors">
 								{{ form.non_field_errors }}
-								{% for field in form %}{{ field.errors }}{% endfor %}
+								{% for field in form %}{% if field.name != "promo" %}{{ field.errors }}{% endif %}{% endfor %}
+								{{ form.promo.errors }}
 							</div>
 							{% endif %}
 							<div class="order__form_btns fic">
