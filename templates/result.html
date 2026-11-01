@@ -62,18 +62,12 @@
 				<div class="title">Как нас найти</div>
 				<div class="contacts__elems ficb">
 					<div class="contacts__block">
+						{% for store in stores %}
 						<div class="contacts__block_item ficc">
-							<div class="contacts__block_intro">ул. Пушкинская, 69</div>
-							<a href="tel:89111744460" class="contacts__block_tel">8 (911) 17 44 460</a>
+							<div class="contacts__block_intro">{{ store.address }}</div>
+							<a href="tel:{{ store.phone_link }}" class="contacts__block_tel">{{ store.phone_display }}</a>
 						</div>
-						<div class="contacts__block_item ficc">
-							<div class="contacts__block_intro">ул. Пушкинская, 69</div>
-							<a href="tel:89111744460" class="contacts__block_tel">8 (911) 17 44 460</a>
-						</div>
-						<div class="contacts__block_item ficc">
-							<div class="contacts__block_intro">ул. Пушкинская, 69</div>
-							<a href="tel:89111744460" class="contacts__block_tel">8 (911) 17 44 460</a>
-						</div>
+						{% endfor %}
 					</div>
 					<img src="{% static 'img/contactsImg.jpg' %}" alt="contactsImg" class="contacts__img">
 					<div class="contacts__map">

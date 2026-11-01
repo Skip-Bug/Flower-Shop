@@ -1,4 +1,7 @@
+from django.core.exceptions import ValidationError
 from django.db import models
+
+from apps.common.phone import format_phone_national, normalize_phone
 
 
 class Event(models.Model):
@@ -47,3 +50,33 @@ class Bouquet(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Store(models.Model):
+    address = models.CharField("Адрес", max_length=200)
+    phone = models.CharField("Телефон", max_length=20)
+    is_active = models.BooleanField("Активен", default=True)
+    order = models.PositiveIntegerField("Порядок", default=0)
+
+    class Meta:
+        verbose_name = "Адрес магазина"
+        verbose_name_plural = "Адреса магазинов"
+        ordering = ["order", "address"]
+
+    def __str__(self):
+        return self.address
+
+    def clean(self):
+        super().clean()
+        normalized = normalize_phone(self.phone)
+        if normalized is None:
+            raise ValidationError({"phone": "Некорректный номер телефона"})
+        self.phone = normalized
+
+    @property
+    def phone_display(self):
+        return format_phone_national(self.phone)
+
+    @property
+    def phone_link(self):
+        return normalize_phone(self.phone) or self.phone

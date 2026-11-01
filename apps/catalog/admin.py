@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import Bouquet, Event
+from .models import Bouquet, Event, Store
 
 
 @admin.register(Event)
@@ -51,3 +51,12 @@ class BouquetAdmin(admin.ModelAdmin):
         ("События", {"fields": ("events",)}),
         ("Статус", {"fields": ("is_active",)}),
     )
+
+
+@admin.register(Store)
+class StoreAdmin(admin.ModelAdmin):
+    list_display = ("id", "address", "phone", "is_active", "order")
+    list_display_links = ("id", "address")
+    list_editable = ("is_active", "order")
+    list_filter = ("is_active",)
+    search_fields = ("address", "phone")

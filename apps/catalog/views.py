@@ -2,7 +2,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_GET
 
-from .models import Bouquet
+from .models import Bouquet, Store
 
 
 @require_GET
@@ -13,10 +13,11 @@ def index(request):
         # TO-DO если букетов станет очень много лучше поменять чтоб не мучить БД
         .order_by("?")[:3]
     )
+    stores = Store.objects.filter(is_active=True)
     return render(
         request,
         "index.html",
-        {"recommended_bouquets": recommended_bouquets},
+        {"recommended_bouquets": recommended_bouquets, "stores": stores},
     )
 
 

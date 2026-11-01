@@ -8,7 +8,7 @@ from requests.exceptions import RequestException
 from yookassa import Configuration, Payment
 from yookassa.domain.exceptions import ApiError, NotFoundError
 
-from apps.catalog.models import Bouquet, Event
+from apps.catalog.models import Bouquet, Event, Store
 
 from .forms import ConsultationRequestForm, OrderForm
 from .models import Order
@@ -44,7 +44,8 @@ def result(request):
     occasion_slug = request.session.pop("event", None)
     budget_key = request.session.pop("budget", None)
     bouquet = pick_bouquet_for_quiz(occasion_slug, budget_key)
-    return render(request, "result.html", {"bouquet": bouquet})
+    stores = Store.objects.filter(is_active=True)
+    return render(request, "result.html", {"bouquet": bouquet, "stores": stores})
 
 
 @require_http_methods(["GET", "POST"])
