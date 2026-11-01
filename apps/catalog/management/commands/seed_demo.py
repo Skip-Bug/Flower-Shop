@@ -1,10 +1,13 @@
 from decimal import Decimal
 
 import requests
+import urllib3
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
 
 from apps.catalog.models import Bouquet, Event
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class Command(BaseCommand):
@@ -36,7 +39,103 @@ class Command(BaseCommand):
         return events
 
     def create_bouquets(self, events):
-        bouquets_data = [
+        for data in self.get_bouquets_data():
+            self.process_bouquet(data, events)
+
+    def process_bouquet(self, data, events):
+        event_slugs = data.pop("events")
+        image_query = data.pop("image_query")
+
+        bouquet, created = Bouquet.objects.get_or_create(
+            slug=data["slug"], defaults=data
+        )
+
+        if created:
+            self.stdout.write(self.style.SUCCESS(f"Создан букет: {bouquet.title}"))
+            for slug in event_slugs:
+                bouquet.events.add(events[slug])
+        else:
+            self.stdout.write(f"Букет {bouquet.title} уже есть в базе.")
+
+        if not bouquet.image and image_query:
+            self.attach_image(bouquet, image_query)
+
+    def attach_image(self, bouquet, image_query):
+        self.stdout.write(
+            f"  Поиск фото для '{bouquet.title}' по запросу '{image_query}'..."
+        )
+        image_url = self.search_commons_image(image_query)
+
+        if not image_url:
+            self.stderr.write(
+                self.style.WARNING(f"  Не удалось найти фото по запросу {image_query}")
+            )
+            return
+
+        self.download_image(bouquet, image_url)
+
+    def search_commons_image(self, search_query):
+        """Ищет первую подходящую картинку через API Викисклада"""
+        headers = {
+            "User-Agent": "FlowerShopDemo/1.0 (https://github.com/Skip-Bug/Flower-Shop)"
+        }
+        params = {
+            "action": "query",
+            "generator": "search",
+            "gsrsearch": f"filetype:bitmap {search_query}",
+            "gsrnamespace": 6,
+            "gsrlimit": 1,
+            "prop": "imageinfo",
+            "iiprop": "url",
+            "iiurlwidth": 800,
+            "format": "json",
+        }
+
+        try:
+            r = requests.get(
+                "https://commons.wikimedia.org/w/api.php",
+                params=params,
+                headers=headers,
+                timeout=15,
+                verify=False,
+            )
+            pages = r.json().get("query", {}).get("pages", {})
+            if not pages:
+                return None
+            page = next(iter(pages.values()))
+            return page.get("imageinfo", [{}])[0].get("thumburl")
+        except Exception as e:
+            self.stderr.write(self.style.ERROR(f"  Ошибка API: {e}"))
+            return None
+
+    def download_image(self, bouquet, image_url):
+        headers = {
+            "User-Agent": "FlowerShopDemo/1.0 (https://github.com/Skip-Bug/Flower-Shop)",
+            "Referer": "https://commons.wikimedia.org/",
+        }
+        try:
+            response = requests.get(
+                image_url, timeout=30, headers=headers, verify=False
+            )
+            if response.status_code != 200:
+                self.stderr.write(
+                    self.style.WARNING(
+                        f"  Не удалось скачать (код {response.status_code})"
+                    )
+                )
+                return
+
+            bouquet.image.save(
+                f"{bouquet.slug}.jpg",
+                ContentFile(response.content),
+                save=True,
+            )
+            self.stdout.write(self.style.SUCCESS("  Фото успешно загружено!"))
+        except Exception as e:
+            self.stderr.write(self.style.ERROR(f"  Ошибка: {e}"))
+
+    def get_bouquets_data(self):
+        return [
             {
                 "title": "Нежность",
                 "slug": "nezhnost",
@@ -45,7 +144,7 @@ class Command(BaseCommand):
                 "composition": "Пионы, эустома, гортензия",
                 "size": "Средний",
                 "events": ["birthday", "just-because"],
-                "image_url": "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?q=80&w=800&auto=format&fit=crop",
+                "image_query": "bouquet of white peonies",
             },
             {
                 "title": "Страсть",
@@ -55,17 +154,17 @@ class Command(BaseCommand):
                 "composition": "Красные розы 51 шт, рускус",
                 "size": "Большой",
                 "events": ["birthday", "wedding"],
-                "image_url": "https://images.unsplash.com/photo-1490750967868-88cb4ecb07e0?q=80&w=800&auto=format&fit=crop",
+                "image_query": "bouquet of red roses",
             },
             {
                 "title": "Весеннее настроение",
                 "slug": "spring-mood",
                 "price": Decimal("2500.00"),
-                "description": "Свежий весенний букет из тюльпанов, который поднимет настроение кому угодно.",
+                "description": "Свежий весенний букет из тюльпанов, который поднимет настроение.",
                 "composition": "Тюльпаны 15 шт, зелень",
                 "size": "Средний",
                 "events": ["birthday", "just-because"],
-                "image_url": "https://images.unsplash.com/photo-1520763185298-1b434c919102?q=80&w=800&auto=format&fit=crop",
+                "image_query": "tulip bouquet",
             },
             {
                 "title": "Бизнес-леди",
@@ -75,7 +174,7 @@ class Command(BaseCommand):
                 "composition": "Белые розы, орхидеи, сухоцветы",
                 "size": "Большой",
                 "events": ["corporate"],
-                "image_url": "https://images.unsplash.com/photo-1591886976077-9e32105b687f?q=80&w=800&auto=format&fit=crop",
+                "image_query": "mixed flower bouquet",
             },
             {
                 "title": "Бюджетный вариант",
@@ -85,37 +184,37 @@ class Command(BaseCommand):
                 "composition": "Хризантемы, герберы",
                 "size": "Маленький",
                 "events": ["just-because", "birthday"],
-                "image_url": "https://images.unsplash.com/photo-1596079890744-c1a0462d0975?q=80&w=800&auto=format&fit=crop",
+                "image_query": "gerbera bouquet",
             },
             {
                 "title": "Солнечный день",
                 "slug": "sunny-day",
                 "price": Decimal("3200.00"),
-                "description": "Яркий букет из подсолнухов, который подарит улыбку даже в пасмурный день.",
+                "description": "Яркий букет из подсолнухов, который подарит улыбку.",
                 "composition": "Подсолнухи 7 шт, солидаго",
                 "size": "Средний",
                 "events": ["birthday", "just-because"],
-                "image_url": "https://images.unsplash.com/photo-1597848212624-a19eb35e2651?q=80&w=800&auto=format&fit=crop",
+                "image_query": "sunflower bouquet",
             },
             {
                 "title": "Розовый рассвет",
                 "slug": "pink-dawn",
                 "price": Decimal("4500.00"),
-                "description": "Нежный и романтичный букет в пастельных тонах. Идеален для невест.",
+                "description": "Нежный и романтичный букет в пастельных тонах.",
                 "composition": "Розы, эустома, бруния",
                 "size": "Средний",
                 "events": ["wedding"],
-                "image_url": "https://images.unsplash.com/photo-1561181286-d3fee7d55364?q=80&w=800&auto=format&fit=crop",
+                "image_query": "pink rose bouquet",
             },
             {
                 "title": "Мужской характер",
                 "slug": "mens-character",
                 "price": Decimal("6500.00"),
-                "description": "Сдержанный, стильный букет с темными акцентами. Отличный вариант для коллег.",
+                "description": "Сдержанный, стильный букет с темными акцентами.",
                 "composition": "Розы, сухоцветы, эвкалипт",
                 "size": "Большой",
                 "events": ["corporate"],
-                "image_url": "https://images.unsplash.com/photo-1508610048659-a06b669e3321?q=80&w=800&auto=format&fit=crop",
+                "image_query": "chrysanthemum bouquet",
             },
             {
                 "title": "Минимализм",
@@ -125,42 +224,6 @@ class Command(BaseCommand):
                 "composition": "1 крупная гербера, зелень",
                 "size": "Маленький",
                 "events": ["just-because"],
-                "image_url": "https://images.unsplash.com/photo-1599731990321-49b8605ee32e?q=80&w=800&auto=format&fit=crop",
+                "image_query": "small flower bouquet",
             },
         ]
-
-        for data in bouquets_data:
-            event_slugs = data.pop("events")
-            image_url = data.pop("image_url")
-
-            bouquet, created = Bouquet.objects.get_or_create(
-                slug=data["slug"], defaults=data
-            )
-
-            if not created:
-                continue
-
-            for slug in event_slugs:
-                bouquet.events.add(events[slug])
-
-            self.download_image(bouquet, image_url)
-            self.stdout.write(self.style.SUCCESS(f"Создан букет: {bouquet.title}"))
-
-    def download_image(self, bouquet, image_url):
-        if not image_url:
-            return
-
-        self.stdout.write(f"  Загрузка фото для '{bouquet.title}'...")
-        try:
-            response = requests.get(image_url, timeout=15)
-            if response.status_code == 200:
-                file_name = f"{bouquet.slug}.jpg"
-                bouquet.image.save(file_name, ContentFile(response.content), save=True)
-            else:
-                self.stderr.write(
-                    self.style.WARNING(
-                        f"  Не удалось скачать (код {response.status_code})"
-                    )
-                )
-        except Exception as e:
-            self.stderr.write(self.style.ERROR(f"  Ошибка при скачивании фото: {e}"))
