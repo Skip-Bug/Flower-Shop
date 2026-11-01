@@ -15,8 +15,12 @@
 						<p class="order__done_text">
 
 							{% if order.bouquet_snapshot.title %}
-       							Букет: {{ order.bouquet_snapshot.title }}<br>
-							{% endif %}<br>
+       							Букет: {{ order.bouquet_snapshot.title }} — {{ order.bouquet_price|floatformat:"-2" }} ₽<br>
+							{% endif %}
+							Доставка: {{ order.delivery_fee|floatformat:"-2" }} ₽<br>
+							{% if order.promo_discount %}
+							Скидка ({{ order.promo_code }}): −{{ order.promo_discount|floatformat:"-2" }} ₽<br>
+							{% endif %}
 							Адрес: {{ order.delivery_address }}<br>
 							Время доставки: {{ order.get_delivery_time_display }}<br>
 							Итого: {{ order.total_price|floatformat:"-2" }} ₽

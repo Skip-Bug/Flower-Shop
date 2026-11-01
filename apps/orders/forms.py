@@ -4,6 +4,17 @@ from .models import ConsultationRequest, Order
 
 
 class OrderForm(forms.ModelForm):
+    promo = forms.CharField(
+        label="Промокод",
+        required=False,
+        max_length=50,
+        widget=forms.TextInput(
+            attrs={
+                "class": "order__form_input",
+                "placeholder": "Введите промокод",
+            }
+        ),
+    )
     consent = forms.BooleanField(
         required=True,
         label="Я согласен(а) с политикой конфиденциальности",
@@ -46,6 +57,10 @@ class OrderForm(forms.ModelForm):
             "delivery_time": forms.RadioSelect(),
             "payment_method": forms.RadioSelect(),
         }
+
+    def get_promo(self):
+        code = (self.cleaned_data.get("promo") or "").strip()
+        return code.upper()
 
 
 class ConsultationRequestForm(forms.ModelForm):

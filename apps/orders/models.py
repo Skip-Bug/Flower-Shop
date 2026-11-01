@@ -1,6 +1,108 @@
+from decimal import ROUND_HALF_UP, Decimal
+
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models
+from django.utils import timezone
 
 from apps.catalog.models import Bouquet
+
+MONEY_QUANT = Decimal("0.01")
+
+
+class PromoCode(models.Model):
+    """Промокод для скидки при заказе."""
+
+    DISCOUNT_PERCENT = "PERCENT"
+    DISCOUNT_AMOUNT = "AMOUNT"
+
+    code = models.CharField("Промокод", max_length=50, unique=True)
+    discount_type = models.CharField(
+        "Тип скидки",
+        max_length=10,
+        choices=[(DISCOUNT_PERCENT, "Процент"), (DISCOUNT_AMOUNT, "Сумма")],
+        default=DISCOUNT_PERCENT,
+    )
+    percent_off = models.PositiveSmallIntegerField("Процент", default=0)
+    amount_off = models.DecimalField(
+        "Сумма скидки, р.",
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        validators=[MinValueValidator(Decimal("0"))],
+    )
+    min_order_sum = models.DecimalField(
+        "Минимальная сумма заказа, р.",
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        validators=[MinValueValidator(Decimal("0"))],
+    )
+    max_uses = models.PositiveIntegerField(
+        "Максимум применений",
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(1)],
+    )
+    used_count = models.PositiveIntegerField("Применено раз", default=0)
+    valid_from = models.DateTimeField("Действует с", null=True, blank=True)
+    valid_until = models.DateTimeField("Действует до", null=True, blank=True)
+    is_active = models.BooleanField("Активен", default=True)
+    description = models.CharField("Описание", max_length=255, blank=True, default="")
+    created_at = models.DateTimeField("Создан", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Промокод"
+        verbose_name_plural = "Промокоды"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return self.code
+
+    def clean(self):
+        if self.discount_type == self.DISCOUNT_PERCENT:
+            if not 1 <= self.percent_off <= 100:
+                raise ValidationError(
+                    {"percent_off": "Процент должен быть от 1 до 100"}
+                )
+        elif self.amount_off <= 0:
+            raise ValidationError({"amount_off": "Укажите сумму скидки больше нуля"})
+
+    @property
+    def is_expired(self):
+        return bool(self.valid_until and self.valid_until < timezone.now())
+
+    @property
+    def is_exhausted(self):
+        return bool(self.max_uses and self.used_count >= self.max_uses)
+
+    def is_usable_for(self, subtotal):
+        if not self.is_active or self.is_expired or self.is_exhausted:
+            return False
+        if self.valid_from and self.valid_from > timezone.now():
+            return False
+        return subtotal >= self.min_order_sum
+
+    def discount_for(self, subtotal):
+        if not self.is_usable_for(subtotal):
+            return Decimal("0")
+        if self.discount_type == self.DISCOUNT_PERCENT:
+            discount = subtotal * self.percent_off / Decimal("100")
+            return discount.quantize(MONEY_QUANT, rounding=ROUND_HALF_UP)
+        return min(self.amount_off, subtotal)
+
+    def reject_reason(self, subtotal):
+        if not self.is_active:
+            return "Промокод отключён"
+        if self.is_expired:
+            return "Срок действия промокода истёк"
+        if self.valid_from and self.valid_from > timezone.now():
+            return "Промокод ещё не действует"
+        if self.is_exhausted:
+            return "Промокод исчерпал лимит применений"
+        if subtotal < self.min_order_sum:
+            return f"Промокод действует от {self.min_order_sum:.0f} р."
+        return ""
 
 
 class Order(models.Model):
@@ -51,8 +153,22 @@ class Order(models.Model):
     delivery_fee = models.DecimalField(
         max_digits=10, decimal_places=2, default=0, verbose_name="Доставка, р."
     )
+    promo_discount = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0, verbose_name="Скидка, р."
+    )
     total_price = models.DecimalField(
         max_digits=10, decimal_places=2, default=0, verbose_name="Итого, р."
+    )
+    promo = models.ForeignKey(
+        PromoCode,
+        verbose_name="Промокод",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="orders",
+    )
+    promo_code = models.CharField(
+        "Промокод (текстом)", max_length=50, blank=True, default=""
     )
     payment_method = models.CharField(
         max_length=20,
