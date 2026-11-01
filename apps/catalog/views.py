@@ -1,9 +1,11 @@
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
+from django.views.decorators.http import require_GET
 
 from .models import Bouquet
 
 
+@require_GET
 def index(request):
     recommended_bouquets = (
         Bouquet.objects.filter(is_active=True)
@@ -18,6 +20,7 @@ def index(request):
     )
 
 
+@require_GET
 def catalog(request):
     bouquets_list = Bouquet.objects.filter(is_active=True).prefetch_related("events")
 
@@ -28,6 +31,7 @@ def catalog(request):
     return render(request, "catalog.html", {"page_obj": page_obj})
 
 
+@require_GET
 def bouquet_detail(request, slug):
     bouquet = get_object_or_404(Bouquet, slug=slug, is_active=True)
     return render(request, "card.html", {"bouquet": bouquet})
