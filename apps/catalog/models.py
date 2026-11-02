@@ -67,6 +67,7 @@ class Store(models.Model):
         return self.address
 
     def clean(self):
+        """Нормализует номер телефона при валидации модели."""
         super().clean()
         normalized = normalize_phone(self.phone)
         if normalized is None:
@@ -75,8 +76,10 @@ class Store(models.Model):
 
     @property
     def phone_display(self):
+        """Возвращает номер телефона в читаемом виде с пробелами."""
         return format_phone_national(self.phone)
 
     @property
     def phone_link(self):
+        """Возвращает номер для ссылки tel: (без пробелов и скобок)."""
         return normalize_phone(self.phone) or self.phone

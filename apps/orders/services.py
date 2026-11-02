@@ -18,6 +18,7 @@ BUDGET_PRICE_RANGES = {
 
 
 def pick_bouquet_for_quiz(occasion_slug, budget_key):
+    """Подбирает букет по параметрам опросника"""
     if not occasion_slug or not budget_key:
         return None
 
