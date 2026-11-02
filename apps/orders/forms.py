@@ -9,6 +9,7 @@ PHONE_PATTERN = r"^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$"
 
 
 def phone_widget():
+    """Возвращает TextInput с атрибутами для ввода телефона."""
     return forms.TextInput(
         attrs={
             "class": "order__form_input",
@@ -71,6 +72,7 @@ class OrderForm(forms.ModelForm):
         }
 
     def clean_customer_phone(self):
+        """Нормализует номер телефона в единый формат +7."""
         value = (self.cleaned_data.get("customer_phone") or "").strip()
         normalized = normalize_phone(value)
         if normalized is None:
@@ -78,6 +80,7 @@ class OrderForm(forms.ModelForm):
         return normalized
 
     def get_promo(self):
+        """Возвращает промокод заглавными буквами для последующей проверки."""
         code = (self.cleaned_data.get("promo") or "").strip()
         return code.upper()
 
@@ -103,6 +106,7 @@ class ConsultationRequestForm(forms.ModelForm):
         }
 
     def clean_phone(self):
+        """Нормализует номер телефона в заявке на консультацию."""
         value = (self.cleaned_data.get("phone") or "").strip()
         normalized = normalize_phone(value)
         if normalized is None:

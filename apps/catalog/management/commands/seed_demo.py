@@ -39,10 +39,12 @@ class Command(BaseCommand):
         return events
 
     def create_bouquets(self, events):
+        """Создаёт все букеты из фиксированных данных."""
         for data in self.get_bouquets_data():
             self.process_bouquet(data, events)
 
     def process_bouquet(self, data, events):
+        """Создаёт или обновляет букет, привязывает события и скачивает фото."""
         event_slugs = data.pop("events")
         image_query = data.pop("image_query")
 
@@ -61,6 +63,7 @@ class Command(BaseCommand):
             self.attach_image(bouquet, image_query)
 
     def attach_image(self, bouquet, image_query):
+        """Ищет и скачивает фото для букета по поисковому запросу."""
         self.stdout.write(
             f"  Поиск фото для '{bouquet.title}' по запросу '{image_query}'..."
         )
@@ -135,6 +138,7 @@ class Command(BaseCommand):
             self.stderr.write(self.style.ERROR(f"  Ошибка: {e}"))
 
     def get_bouquets_data(self):
+        """Возвращает список словарей с данными для 9 демо-букетов."""
         return [
             {
                 "title": "Нежность",

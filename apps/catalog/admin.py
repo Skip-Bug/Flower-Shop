@@ -26,6 +26,7 @@ class BouquetAdmin(admin.ModelAdmin):
 
     @admin.display(description="Превью")
     def image_preview_small(self, obj):
+        """Отображает уменьшенное фото букета в списке."""
         if obj.image:
             return format_html(
                 '<img src="{}" style="max-height: 50px; border-radius: 5px;" />',
@@ -35,6 +36,7 @@ class BouquetAdmin(admin.ModelAdmin):
 
     @admin.display(description="Текущее фото")
     def image_preview_large(self, obj):
+        """Отображает фото букета в полном размере в форме."""
         if obj.image:
             return format_html(
                 '<img src="{}" style="max-height: 300px; max-width: 100%; border-radius: 10px; border: 1px solid #17CF97;" />',

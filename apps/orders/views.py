@@ -22,6 +22,7 @@ from .services import (
 
 @require_http_methods(["GET", "POST"])
 def quiz(request):
+    """Квиз-подбор букета: выбор повода (этап 1)."""
     if request.method == "POST":
         request.session["event"] = request.POST.get("event")
         return redirect("orders:quiz_step")
@@ -32,6 +33,7 @@ def quiz(request):
 
 @require_http_methods(["GET", "POST"])
 def quiz_step(request):
+    """Квиз-подбор букета: выбор бюджета (этап 2)."""
     if request.method == "POST":
         request.session["budget"] = request.POST.get("budget")
         return redirect("orders:result")
@@ -41,6 +43,7 @@ def quiz_step(request):
 
 @require_GET
 def result(request):
+    """Результат квиза: подобранный букет по поводу и бюджету."""
     occasion_slug = request.session.pop("event", None)
     budget_key = request.session.pop("budget", None)
     bouquet = pick_bouquet_for_quiz(occasion_slug, budget_key)
@@ -50,6 +53,7 @@ def result(request):
 
 @require_http_methods(["GET", "POST"])
 def order(request, slug):
+    """Оформление заказа: форма + создание платежа ЮKassa."""
     bouquet = get_object_or_404(Bouquet, slug=slug, is_active=True)
 
     if request.method == "GET":
@@ -87,6 +91,7 @@ def order(request, slug):
 
 @require_GET
 def order_done(request, order_id):
+    """Рендерит страницу «Заказ оформлен» с деталями последнего заказа."""
     if str(request.session.get("last_order_id")) != str(order_id):
         raise Http404("Заказ не найден")
 
@@ -97,12 +102,14 @@ def order_done(request, order_id):
 
 @require_GET
 def consultation(request):
+    """Рендерит страницу заявки на консультацию."""
     form = ConsultationRequestForm()
     return render(request, "consultation.html", {"form": form})
 
 
 @require_POST
 def consultation_send(request):
+    """Обработка отправки заявки на консультацию."""
     form = ConsultationRequestForm(request.POST)
     if form.is_valid():
         form.save()
@@ -113,12 +120,13 @@ def consultation_send(request):
 
 @require_GET
 def consultation_done(request):
+    """Рендерит страницу подтверждения отправки заявки на консультацию."""
     return render(request, "consultation_done.html")
 
 
 @require_GET
 def payment_success(request, order_id):
-    """Поодтвердение оплаты"""
+    """Выполняет подтверждение оплаты"""
     if str(request.session.get("last_order_id")) != str(order_id):
         raise Http404("Заказ не найден")
 

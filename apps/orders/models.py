@@ -60,6 +60,7 @@ class PromoCode(models.Model):
         return self.code
 
     def clean(self):
+        """Валидация полей: процент от 1 до 100, сумма больше нуля."""
         if self.discount_type == self.DISCOUNT_PERCENT:
             if not 1 <= self.percent_off <= 100:
                 raise ValidationError(
@@ -77,6 +78,7 @@ class PromoCode(models.Model):
         return bool(self.max_uses and self.used_count >= self.max_uses)
 
     def is_usable_for(self, subtotal):
+        """Проверяет, можно ли применить промокод к сумме заказа."""
         if not self.is_active or self.is_expired or self.is_exhausted:
             return False
         if self.valid_from and self.valid_from > timezone.now():
@@ -84,6 +86,7 @@ class PromoCode(models.Model):
         return subtotal >= self.min_order_sum
 
     def discount_for(self, subtotal):
+        """Возвращает сумму скидки в рублях для указанной суммы заказа."""
         if not self.is_usable_for(subtotal):
             return Decimal("0")
         if self.discount_type == self.DISCOUNT_PERCENT:
@@ -92,6 +95,7 @@ class PromoCode(models.Model):
         return min(self.amount_off, subtotal)
 
     def reject_reason(self, subtotal):
+        """Возвращает причину отказа в применении промокода (пустая строка — ок)."""
         if not self.is_active:
             return "Промокод отключён"
         if self.is_expired:

@@ -7,6 +7,7 @@ from .models import Bouquet, Store
 
 @require_GET
 def index(request):
+    """Рендерит главную страницу: 3 случайных букета и список магазинов."""
     recommended_bouquets = (
         Bouquet.objects.filter(is_active=True)
         .prefetch_related("events")
@@ -23,6 +24,7 @@ def index(request):
 
 @require_GET
 def catalog(request):
+    """Рендерит каталог букетов с пагинацией по 6 штук на странице."""
     bouquets_list = Bouquet.objects.filter(is_active=True).prefetch_related("events")
 
     paginator = Paginator(bouquets_list, 6)
@@ -34,5 +36,6 @@ def catalog(request):
 
 @require_GET
 def bouquet_detail(request, slug):
+    """Рендерит страницу конкретного букета по slug."""
     bouquet = get_object_or_404(Bouquet, slug=slug, is_active=True)
     return render(request, "card.html", {"bouquet": bouquet})

@@ -40,6 +40,7 @@ class OrderAdmin(admin.ModelAdmin):
     )
 
     def response_change(self, request, obj):
+        """Перенаправляет по параметру next после редактирования заказа."""
         next_url = request.GET.get("next")
         if next_url and url_has_allowed_host_and_scheme(
             next_url,
@@ -78,6 +79,7 @@ class PromoCodeAdmin(admin.ModelAdmin):
 
     @admin.display(description="Скидка")
     def discount_display(self, obj):
+        """Отображает скидку в % или рублях в зависимости от типа."""
         if obj.discount_type == PromoCode.DISCOUNT_PERCENT:
             return f"{obj.percent_off}%"
         return f"{obj.amount_off} ₽"
@@ -86,7 +88,9 @@ class PromoCodeAdmin(admin.ModelAdmin):
 @admin.register(SiteSettings)
 class SiteSettingsAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
+        """Разрешает создание только одной записи настроек."""
         return not SiteSettings.objects.exists()
 
     def has_delete_permission(self, request, obj=None):
+        """Запрещает удаление настроек через админку."""
         return False
