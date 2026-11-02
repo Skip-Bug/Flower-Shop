@@ -4,6 +4,8 @@
 [![Лицензия MIT](https://img.shields.io/badge/Лицензия-MIT-blue.svg)](LICENSE)
 [![Демо сайта](https://img.shields.io/badge/Демо-сайт-brightgreen)](https://skip-project.githubpage.com)
 
+<img width="907" height="630" alt="Screenshot 2026-11-02 132136" src="https://github.com/user-attachments/assets/0c39cbd8-d767-48c7-9a7a-6fb81a375ffb" />
+
 Сайт красноярского цветочного магазина. Букеты со смыслом.
 
 Клиент выбирает букет из каталога или проходит квиз для подбора, оформляет заказ с адресом и временем доставки, применяет промокод и оплачивает онлайн через ЮKassa или наличными при получении.
@@ -18,6 +20,8 @@
 - Заявка на консультацию — флорист свяжется с клиентом
 - Админ-панель: заказы, букеты, промокоды, настройки доставки
 - Дашборд флориста — список активных заказов со статусами
+
+<img width="1049" height="369" alt="image" src="https://github.com/user-attachments/assets/040d8083-21be-4b5c-b8b5-8127321ae0cc" />
 
 ## Требования
 
