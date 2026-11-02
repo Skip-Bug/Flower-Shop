@@ -2,7 +2,7 @@
 
 [![GitHub Репозиторий](https://img.shields.io/badge/Репозиторий-GitHub-blue?logo=github)](https://github.com/Skip-Bug/Flower-Shop)
 [![Лицензия MIT](https://img.shields.io/badge/Лицензия-MIT-blue.svg)](LICENSE)
-[![Демо сайта](https://img.shields.io/badge/Демо-сайт-brightgreen)](https://skip-project.githubpage.com)
+[![Демо сайта](https://img.shields.io/badge/Демо-сайт-brightgreen)](https://skip-project.localhost.cc)
 
 <img width="907" height="630" alt="Screenshot 2026-11-02 132136" src="https://github.com/user-attachments/assets/0c39cbd8-d767-48c7-9a7a-6fb81a375ffb" />
 
